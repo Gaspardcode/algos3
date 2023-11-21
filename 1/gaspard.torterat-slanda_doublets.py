@@ -117,32 +117,64 @@ def nosolution(G):
     """ Return a *doublet* without solution in G, (None, None) if none
     
     """
-    #FIXME
-    pass
+    M = [0] * G.order
+    V = __dfs(G,0,M,[])
+    i = 0
+    for i in range(G.order):
+        if not M[i]:
+            return (G.labels[0],G.labels[i])
+    return (None,None)
 
-G1 = buildgraph("lexicons/lex_some.txt",3)
-G2 = buildgraph("lexicons/lex_first.txt",3)
-G3 = buildgraph("lexicons/lex_all.txt",3)
-#print(alldoublets(G1,"pen"))
-print(graph.dot(G1))
 ###############################################################################
 #   LEVEL 3
+def __bfs(G,x,end,V):
+    """proceeds to bfs and builds the parent vector. Quits when the word end is found.
+        returns either the number of the vertex or None if there is no path"""
+    V[x] = -1
+    Q = queue.Queue()
+    Q.enqueue(x)
+    while not Q.isempty():
+        x = Q.dequeue()
+        for y in G.adjlists[x]:
+            if V[y] == -2:
+                V[y] = x
+                if G.labels[y] == end:
+                    return y
+                else:
+                    Q.enqueue(y)
+    return None
 
 def ladder(G, start, end):
     """ Return a *ladder* to the *doublet* (start, end) in G
-
     """
-    #FIXME
-    pass
+    V = [-2] * G.order
+    x = G.labels.index(end)
+    v = __bfs(G,x,start,V)
+    if v == None:
+        return []
+    else:
+        LAD = []
+        while V[v] != -1:
+            LAD.append(G.labels[v])
+            v = V[v]
+        LAD.append(end)
+        return LAD 
     
-
 def mostdifficult(G):
     """ Find in G one of the most difficult *doublets* (that has the longest *ladder*)
 
     """
-    #FIXME
-    pass
-
+    start = G.labels[0]
+    end = G.labels[0]
+    _max = 0
+    for a in range(G.order):
+        for b in range(a,G.order):
+            tmp = len(ladder(G,G.labels[a],G.labels[b]))
+            if tmp > _max:
+                _max = tmp
+                start = G.labels[a]
+                end = G.labels[b]
+    return (start,end,_max) 
 
 ###############################################################################
 #   BONUS (just for the fun...)
