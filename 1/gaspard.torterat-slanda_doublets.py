@@ -98,13 +98,20 @@ def ischain(G, L):
 ###############################################################################
 #   LEVEL 2
 
+def __dfs(G,x,M,V):
+    """ proceed with dfs and adds possible words to V """
+    M[x] = 1
+    for y in G.adjlists[x]:
+        if not M[y]:
+            V.append(G.labels[y])
+            V = __dfs(G,y,M,V)
+    return V
 def alldoublets(G, start):
     """ Return the list of all words that can form a *doublet* with the word start in the lexicon in G
-
     """
-    #FIXME
-    pass
-    
+    M = [0] * G.order
+    v = G.labels.index(start)
+    return __dfs(G,v,M,[])
 
 def nosolution(G):
     """ Return a *doublet* without solution in G, (None, None) if none
@@ -113,17 +120,11 @@ def nosolution(G):
     #FIXME
     pass
 
-"""
-G1 = buildgraph("lexicons/lex_some.txt",4)
+G1 = buildgraph("lexicons/lex_some.txt",3)
 G2 = buildgraph("lexicons/lex_first.txt",3)
 G3 = buildgraph("lexicons/lex_all.txt",3)
-print(mostconnected(G3))
-print(ischain(G1,["four","foul","fool","food","ford","word","wold","weld","weed","feed","fled","flee","free","tree"]))
-print(ischain(G1,["four","foul","ford","word"]))
-print(ischain(G2,["rat","oat","mat","man"]))
-print(ischain(G2,["rat","oat","rat","oat","mat","man"]))
-print(ischain(G2,["rat","oat","oar","mat","man"]))
-"""
+#print(alldoublets(G1,"pen"))
+print(graph.dot(G1))
 ###############################################################################
 #   LEVEL 3
 
